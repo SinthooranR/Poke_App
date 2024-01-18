@@ -24,6 +24,16 @@ export interface IPokemonDetailsProps {
   navigation: IPokemonDetailsNavigationProp;
 }
 
+//Moves Page
+export type IMoveListNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Moves"
+>;
+
+export interface IMoveListProps {
+  navigation: IMoveListNavigationProp;
+}
+
 //Move Details Page
 export type IMoveDetailsNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -60,6 +70,9 @@ export interface IPokemonInfo {
   ];
   moves: IMove[];
   stats: IPokemonStats[];
+  species: {
+    name: string;
+  };
 }
 
 export interface ISpecies {
@@ -94,6 +107,12 @@ export interface IMoveData {
   flavor_text_entries: [
     {
       flavor_text: string;
+    }
+  ];
+  learned_by_pokemon: [
+    {
+      name: string;
+      url: string;
     }
   ];
 }

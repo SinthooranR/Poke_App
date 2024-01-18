@@ -1,16 +1,17 @@
 import { baseUrl } from "./constants";
 
-export const getPokemonById = async (name: string) => {
+export const getAllMoves = async () => {
   try {
-    const response = await fetch(`${baseUrl}/pokemon/${name}`);
+    const response = await fetch(`${baseUrl}/move?limit=1000`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
-    return data;
+
+    return data.results;
   } catch (error) {
-    throw new Error(`Error getting Pokémon Details`);
+    throw new Error(`Error gettin Move List`);
   }
 };

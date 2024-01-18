@@ -2,7 +2,6 @@ import { StatusBar } from "expo-status-bar";
 import { FC, useEffect, useState } from "react";
 import {
   FlatList,
-  Image,
   ListRenderItem,
   StyleSheet,
   Text,
@@ -11,6 +10,7 @@ import {
 } from "react-native";
 import { getAllPokemon } from "../helpers/getAllPokemon";
 import { IHomeScreenProps } from "../interfaces";
+import PokemonImage from "../components/PokemonImage";
 
 interface IPokemon {
   name: string;
@@ -20,22 +20,16 @@ interface IPokemon {
 const Home: FC<IHomeScreenProps> = ({ navigation }) => {
   const [pokemons, setPokemons] = useState<IPokemon[]>([]);
 
-  const navigateToDetails = (id: string) => {
-    navigation.navigate("PokemonDetails", { param: id });
+  const navigateToDetails = (name: string) => {
+    navigation.navigate("PokemonDetails", { param: name });
   };
 
   const pokemonView: ListRenderItem<IPokemon> = ({ item }) => {
-    const id = item.url.split("/").slice(-2, -1)[0];
+    // const id = item.url.split("/").slice(-2, -1)[0];
     return (
-      <TouchableOpacity onPress={() => navigateToDetails(id)}>
+      <TouchableOpacity onPress={() => navigateToDetails(item.name)}>
         <View style={styles.pokemonContainer}>
-          <Image
-            source={{
-              uri: `https://img.pokemondb.net/artwork/large/${item.name}.jpg`,
-            }}
-            resizeMode="contain"
-            style={styles.pokemonImage}
-          />
+          <PokemonImage name={item?.name} />
           <Text style={styles.pokemonText}>{item.name}</Text>
         </View>
       </TouchableOpacity>
@@ -74,7 +68,6 @@ const Home: FC<IHomeScreenProps> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",

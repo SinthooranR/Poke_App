@@ -29,3 +29,25 @@ export const getTypeColor = (type: string): string => {
   const uppercaseType = `TYPE_${type.toUpperCase()}`;
   return colors[uppercaseType] || "";
 };
+
+export const getImageByPokemonName = (name?: string) => {
+  if (name?.includes("galar")) {
+    return `https://img.pokemondb.net/artwork/large/${name.replace(
+      "galar",
+      "galarian"
+    )}.jpg`;
+  }
+  if (name?.includes("alola")) {
+    return `https://img.pokemondb.net/artwork/large/${name.replace(
+      "alola",
+      "alolan"
+    )}.jpg`;
+  }
+  if (name?.includes("hisui")) {
+    return `https://img.pokemondb.net/artwork/large/${name.replace(
+      "hisui",
+      "hisuian"
+    )}.jpg`;
+  }
+  return `https://img.pokemondb.net/artwork/large/${name}.jpg`;
+};

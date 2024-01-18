@@ -9,7 +9,10 @@ export const getAllPokemon = async () => {
     }
 
     const data = await response.json();
-    return data.results;
+    const filteredData = data.results.filter(
+      (pokemon: any) => !pokemon.name.includes("gmax")
+    );
+    return filteredData;
   } catch (error) {
     throw new Error(`Error getting Pokémon List`);
   }

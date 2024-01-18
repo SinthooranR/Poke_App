@@ -1,11 +1,16 @@
 import React, { FC, useEffect, useState } from "react";
 import { getMoveDataByName } from "../../helpers/getMoveData";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { IMoveData, IPokemonDetailsNavigationProp } from "../../interfaces";
+import {
+  IMoveData,
+  IMoveListNavigationProp,
+  IMoveListProps,
+  IPokemonDetailsNavigationProp,
+} from "../../interfaces";
 
 const PokemonMove: FC<{
   moveName: string;
-  navigation: IPokemonDetailsNavigationProp;
+  navigation: IPokemonDetailsNavigationProp | IMoveListNavigationProp;
 }> = ({ moveName, navigation }) => {
   const [moveData, setMoveData] = useState<IMoveData>();
 

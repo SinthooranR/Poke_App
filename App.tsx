@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import Home from "./screens/Home";
 import PokemonDetails from "./screens/PokemonDetails";
 import { RootStackParamList } from "./screens/stackParams";
@@ -8,8 +9,10 @@ import { TouchableOpacity } from "react-native";
 import { FC } from "react";
 import { IHomeScreenNavigationProp, IHomeScreenProps } from "./interfaces";
 import MoveDetails from "./screens/MoveDetails";
+import AllMoves from "./screens/AllMoves";
 
 export default function App() {
+  const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator<RootStackParamList>();
 
   const PokeballIcon: FC<IHomeScreenProps> = ({ navigation }) => {
@@ -33,6 +36,30 @@ export default function App() {
       </TouchableOpacity>
     );
   };
+  const DrawerScreens = () => {
+    return (
+      <Drawer.Navigator
+        screenOptions={{
+          drawerLabelStyle: {
+            color: "#000000", // Replace with your desired red color
+          },
+          drawerActiveTintColor: "#ee1515",
+        }}
+      >
+        <Drawer.Screen
+          name="Home"
+          component={Home}
+          options={{ headerStyle: { backgroundColor: "#ED1C24" } }}
+        />
+
+        <Drawer.Screen
+          name="Moves"
+          component={AllMoves}
+          options={{ headerStyle: { backgroundColor: "#ED1C24" } }}
+        />
+      </Drawer.Navigator>
+    );
+  };
 
   return (
     <NavigationContainer>
@@ -46,9 +73,9 @@ export default function App() {
         })}
       >
         <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ headerStyle: { backgroundColor: "#ED1C24" } }}
+          name="Main"
+          component={DrawerScreens}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen name="PokemonDetails" component={PokemonDetails} />
