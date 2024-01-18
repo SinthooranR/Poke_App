@@ -1,5 +1,4 @@
-import { StatusBar } from "expo-status-bar";
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   FlatList,
   ListRenderItem,
@@ -7,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput,
 } from "react-native";
 import { getAllPokemon } from "../helpers/getAllPokemon";
 import { IHomeScreenProps } from "../interfaces";
@@ -18,14 +18,37 @@ interface IPokemon {
 }
 
 const Home: FC<IHomeScreenProps> = ({ navigation }) => {
-  const [pokemons, setPokemons] = useState<IPokemon[]>([]);
+  const [pokemons, setPokemons] = useState<IPokemon[]>([]); // Your initial data
+  const [filteredPokemons, setFilteredPokemons] = useState<IPokemon[]>([]); // State for filtered data
+  const [viewMode, setViewMode] = useState<"default" | "search">("default");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const handleSearch = () => {
+    const filteredData = pokemons.filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredPokemons(filteredData);
+    setViewMode("search");
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const pokemonData = await getAllPokemon();
+        setPokemons(pokemonData);
+        setFilteredPokemons(pokemonData);
+      } catch (error) {
+        console.error("Error getting Pokémon list");
+      }
+    };
+    fetchData();
+  }, []);
 
   const navigateToDetails = (name: string) => {
     navigation.navigate("PokemonDetails", { param: name });
   };
 
   const pokemonView: ListRenderItem<IPokemon> = ({ item }) => {
-    // const id = item.url.split("/").slice(-2, -1)[0];
     return (
       <TouchableOpacity onPress={() => navigateToDetails(item.name)}>
         <View style={styles.pokemonContainer}>
@@ -36,23 +59,35 @@ const Home: FC<IHomeScreenProps> = ({ navigation }) => {
     );
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const pokemonData = await getAllPokemon();
-        setPokemons(pokemonData);
-      } catch (error) {
-        console.error("Error getting Pokémon list");
-      }
-    };
-    fetchData();
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>National Pokedex</Text>
-
-      {pokemons.length > 0 && (
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingBottom: 10,
+        }}
+      >
+        <TextInput
+          style={styles.input}
+          placeholder="Search..."
+          placeholderTextColor="#666"
+          onChangeText={(text) => setSearchQuery(text)}
+          onSubmitEditing={handleSearch}
+        />
+      </View>
+      {viewMode === "search" && filteredPokemons.length > 0 && (
+        <FlatList
+          data={filteredPokemons}
+          keyExtractor={(item) => item.name}
+          renderItem={pokemonView}
+          numColumns={3}
+          contentContainerStyle={styles.flatListContainer}
+        />
+      )}
+      {viewMode === "default" && pokemons.length > 0 && (
         <FlatList
           data={pokemons}
           keyExtractor={(item) => item.name}
@@ -61,7 +96,6 @@ const Home: FC<IHomeScreenProps> = ({ navigation }) => {
           contentContainerStyle={styles.flatListContainer}
         />
       )}
-      <StatusBar style="auto" />
     </View>
   );
 };
@@ -71,11 +105,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    height: "100%",
   },
   title: {
     textTransform: "capitalize",
     fontSize: 24,
     marginVertical: 12,
+  },
+  optionsText: {
+    color: "blue",
+    textDecorationLine: "underline",
   },
   pokemonContainer: {
     justifyContent: "center",
@@ -87,12 +126,18 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 8,
   },
-  pokemonImage: {
-    width: 100,
-    height: 100,
-  },
   pokemonText: {
     textTransform: "capitalize",
+  },
+  input: {
+    height: 40,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    marginTop: 10,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    color: "#333",
+    width: "75%",
   },
 });
 

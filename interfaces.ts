@@ -49,6 +49,18 @@ export interface IMoveDetailsProps {
   navigation: IMoveDetailsNavigationProp;
 }
 
+//Items Page
+export type IUseItemsNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Items"
+>;
+
+export interface IUseItemsListProps {
+  navigation: IUseItemsNavigationProp;
+}
+
+//OTHERS
+
 export interface IPokemonInfo {
   name: string;
   types: [
@@ -104,15 +116,41 @@ export interface IMoveData {
   damage_class: {
     name: string;
   };
+  effect_entries: [
+    {
+      effect: string;
+      short_effect: string;
+    }
+  ];
   flavor_text_entries: [
     {
       flavor_text: string;
+      language: {
+        name: string;
+      };
     }
   ];
+  effect_chance: number;
   learned_by_pokemon: [
     {
       name: string;
       url: string;
     }
   ];
+}
+
+export interface IUseItemData {
+  name: string;
+  category: {
+    name: string;
+  };
+  effect_entries: [
+    {
+      effect: string;
+      short_effect: string;
+    }
+  ];
+  sprites: {
+    default: string;
+  };
 }

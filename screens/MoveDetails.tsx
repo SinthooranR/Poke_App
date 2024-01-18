@@ -1,19 +1,18 @@
 import { StatusBar } from "expo-status-bar";
 import { FC, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
-  Image,
   ListRenderItem,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { getImageByPokemonName, getTypeColor } from "../helpers/constants";
+import { getTypeColor } from "../helpers/constants";
 import { IMoveData, IMoveDetailsProps } from "../interfaces";
-import { getMoveDataByName } from "../helpers/getMoveData";
 import PokemonImage from "../components/PokemonImage";
+import { getMoveDataByName } from "../helpers/getMoves";
 
 interface IPokemon {
   name: string;
@@ -24,6 +23,7 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
   //returns an ID for pokemon
   const { param } = route.params;
   const [move, setMove] = useState<IMoveData>();
+  const [loading, setLoading] = useState(true);
 
   const navigateToDetails = (name: string) => {
     navigation.navigate("PokemonDetails", { param: name });
@@ -32,6 +32,8 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+
         const moveData = await getMoveDataByName(param);
         setMove(moveData);
 
@@ -43,6 +45,8 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
         });
       } catch (error) {
         console.error("Error fetching Move Data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -63,21 +67,47 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{move?.name}</Text>
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size={120} color="#ED1C24" />
+        </View>
+      ) : (
+        <>
+          <Text style={styles.title}>{move?.name}</Text>
 
-      {move && move?.learned_by_pokemon.length > 0 && (
-        <FlatList
-          data={move?.learned_by_pokemon.filter(
-            (item: any) => !item.name.includes("gmax")
+          <View style={styles.descContainer}>
+            <Text style={styles.subHeader}>Description</Text>
+            <Text style={styles.descriptionText}>
+              {move?.flavor_text_entries
+                .filter((text) => text.language.name === "en")[0]
+                .flavor_text.replace("\n", " ")}
+            </Text>
+
+            <Text style={styles.subHeader}>Effect</Text>
+            <Text style={styles.descriptionText}>
+              {move?.effect_entries[0].short_effect.replace(
+                "$effect_chance",
+                move.effect_chance.toString()
+              )}
+            </Text>
+          </View>
+
+          {move && move?.learned_by_pokemon.length > 0 && (
+            <FlatList
+              data={move?.learned_by_pokemon.filter(
+                (item: any) => !item.name.includes("gmax")
+              )}
+              keyExtractor={(item) => item.name}
+              renderItem={pokemonView}
+              numColumns={3}
+              contentContainerStyle={styles.flatListContainer}
+              bounces={false}
+            />
           )}
-          keyExtractor={(item) => item.name}
-          renderItem={pokemonView}
-          numColumns={3}
-          contentContainerStyle={styles.flatListContainer}
-          bounces={false}
-        />
+
+          <StatusBar style="auto" />
+        </>
       )}
-      <StatusBar style="auto" />
     </View>
   );
 };
@@ -90,10 +120,31 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingBottom: 18,
   },
+  loadingContainer: {
+    display: "flex",
+    marginTop: "50%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   title: {
     textTransform: "capitalize",
     fontSize: 24,
     marginVertical: 12,
+  },
+  descContainer: {
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingHorizontal: 24,
+  },
+  subHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  descriptionText: {
+    width: "100%",
+    minWidth: 200,
   },
   pokemonContainer: {
     justifyContent: "center",
@@ -102,6 +153,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   flatListContainer: {
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 16,
     paddingHorizontal: 8,
   },

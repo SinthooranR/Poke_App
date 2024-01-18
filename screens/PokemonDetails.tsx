@@ -8,7 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { getTypeColor } from "../helpers/constants";
+import { getImageByPokemonName, getTypeColor } from "../helpers/constants";
 import { IPokemonDetailsProps, IPokemonInfo, ISpecies } from "../interfaces";
 import PokemonStats from "../components/PokemonStats";
 import { getPokemonById } from "../helpers/getPokemonById";
@@ -29,12 +29,6 @@ const PokemonDetails: FC<IPokemonDetailsProps> = ({ route, navigation }) => {
 
   const navigateToDetails = (name: string) => {
     navigation.setParams({ param: name });
-  };
-
-  const handleScrollToTop = () => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ y: 0, animated: true });
-    }
   };
 
   useEffect(() => {
@@ -67,7 +61,6 @@ const PokemonDetails: FC<IPokemonDetailsProps> = ({ route, navigation }) => {
       } catch (error) {
         console.error("Error fetching Pokémon:", error);
       } finally {
-        // Set loading state to false once changes are rendered
         setLoading(false);
       }
     };
@@ -93,7 +86,7 @@ const PokemonDetails: FC<IPokemonDetailsProps> = ({ route, navigation }) => {
           </Text>
           <Image
             source={{
-              uri: `https://img.pokemondb.net/artwork/large/${pokemon?.name}.jpg`,
+              uri: getImageByPokemonName(pokemon?.name),
             }}
             resizeMode="contain"
             style={styles.pokemonImage}
@@ -150,22 +143,30 @@ const PokemonDetails: FC<IPokemonDetailsProps> = ({ route, navigation }) => {
           {otherForms.length > 0 && (
             <>
               <Text style={styles.pokemonText}>Other Forms:</Text>
-              <View style={styles.evolutionsContainer}>
-                {otherForms &&
-                  otherForms.length > 0 &&
-                  otherForms
-                    .filter(({ name }) => name !== pokemon?.name)
-                    .map(({ name, id }: ISpecies) => (
-                      <View style={styles.speciesContainer} key={name}>
-                        <TouchableOpacity onPress={() => navigateToDetails(id)}>
-                          <PokemonImage name={name} />
-                          <Text style={styles.speciesText}>
-                            {name.replace("-", " ")}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    ))}
-              </View>
+              <ScrollView
+                contentContainerStyle={styles.scrollContainer}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+              >
+                <View style={styles.evolutionsContainer}>
+                  {otherForms &&
+                    otherForms.length > 0 &&
+                    otherForms
+                      .filter(({ name }) => name !== pokemon?.name)
+                      .map(({ name, id }: ISpecies) => (
+                        <View style={styles.speciesContainer} key={name}>
+                          <TouchableOpacity
+                            onPress={() => navigateToDetails(id)}
+                          >
+                            <PokemonImage name={name} />
+                            <Text style={styles.speciesText}>
+                              {name.replace("-", " ")}
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                </View>
+              </ScrollView>
             </>
           )}
           <PokemonStats
@@ -185,13 +186,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    // justifyContent: "center",
+    justifyContent: "center",
   },
   loadingContainer: {
     display: "flex",
     marginTop: "50%",
     justifyContent: "center",
     alignItems: "center",
+  },
+  scrollContainer: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
   pokemonImage: {
     width: 120,

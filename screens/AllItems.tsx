@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { IMoveListProps } from "../interfaces";
+import { IUseItemsListProps } from "../interfaces";
 import {
   ActivityIndicator,
   FlatList,
@@ -8,26 +8,26 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { getAllMoves } from "../helpers/getMoves";
-import PokemonMove from "../components/PokemonMove/Index";
+import { getAllUseItems } from "../helpers/getItems";
+import Item from "../components/Item";
 
-interface IMove {
+interface IUseItem {
   name: string;
   url: string;
 }
 
-const AllMoves: FC<IMoveListProps> = ({ navigation }) => {
-  const [moves, setMoves] = useState<IMove[]>([]);
+const AllItems: FC<IUseItemsListProps> = ({ navigation }) => {
+  const [items, setItems] = useState<IUseItem[]>([]);
+  const [filteredItems, setFilteredItems] = useState<IUseItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filteredMoves, setFilteredMoves] = useState<IMove[]>([]);
   const [viewMode, setViewMode] = useState<"default" | "search">("default");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleSearch = () => {
-    const filteredData = moves.filter((move) =>
-      move.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredData = items.filter((item) =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    setFilteredMoves(filteredData);
+    setFilteredItems(filteredData);
     setViewMode("search");
   };
 
@@ -35,22 +35,24 @@ const AllMoves: FC<IMoveListProps> = ({ navigation }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const movesData = await getAllMoves();
-        setMoves(movesData);
-        setFilteredMoves(movesData);
+
+        const itemsData = await getAllUseItems();
+        setItems(itemsData);
+        setFilteredItems(itemsData);
       } catch (error) {
         console.error("Error getting Moves list");
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
-  const moveView: ListRenderItem<IMove> = ({ item }) => {
+  const itemView: ListRenderItem<IUseItem> = ({ item }) => {
     return (
       <View style={styles.moveContainer}>
-        <PokemonMove moveName={item.name} navigation={navigation} />
+        <Item moveName={item.name} />
       </View>
     );
   };
@@ -81,19 +83,19 @@ const AllMoves: FC<IMoveListProps> = ({ navigation }) => {
             />
           </View>
 
-          {viewMode === "search" && filteredMoves.length > 0 && (
+          {viewMode === "search" && filteredItems.length > 0 && (
             <FlatList
-              data={filteredMoves}
+              data={filteredItems}
               keyExtractor={(item) => item.name}
-              renderItem={moveView}
+              renderItem={itemView}
               contentContainerStyle={styles.flatListContainer}
             />
           )}
-          {viewMode === "default" && moves.length > 0 && (
+          {viewMode === "default" && items.length > 0 && (
             <FlatList
-              data={moves}
+              data={items}
               keyExtractor={(item) => item.name}
-              renderItem={moveView}
+              renderItem={itemView}
               contentContainerStyle={styles.flatListContainer}
             />
           )}
@@ -108,6 +110,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    height: "100%",
+    width: "100%",
   },
   loadingContainer: {
     display: "flex",
@@ -121,15 +125,18 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   moveContainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 5,
-    marginHorizontal: 5,
+    width: "100%",
   },
   flatListContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
     paddingVertical: 16,
-    paddingHorizontal: 8,
+    paddingHorizontal: 15,
   },
   input: {
     height: 40,
@@ -143,4 +150,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AllMoves;
+export default AllItems;
