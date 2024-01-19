@@ -22,7 +22,6 @@ interface IPokemon {
 }
 
 const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
-  //returns an ID for pokemon
   const { param } = route.params;
   const [move, setMove] = useState<IMoveData>();
   const [loading, setLoading] = useState(true);
@@ -65,7 +64,6 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
   }, [param, navigation]);
 
   const pokemonView: ListRenderItem<IPokemon> = ({ item }) => {
-    // const id = item.url.split("/").slice(-2, -1)[0];
     return (
       <TouchableOpacity onPress={() => navigateToDetails(item.name)}>
         <View style={styles.pokemonContainer}>

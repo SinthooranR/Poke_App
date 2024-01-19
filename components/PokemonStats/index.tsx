@@ -49,7 +49,7 @@ const PokemonStats: FC<PokemonStats> = ({ stats, type }) => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 16,
-    paddingHorizontal: 16, // Add horizontal padding
+    paddingHorizontal: 16,
     width: "100%",
   },
   title: {

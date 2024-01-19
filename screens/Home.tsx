@@ -11,6 +11,7 @@ import {
 import { getAllPokemon } from "../helpers/getAllPokemon";
 import { IHomeScreenProps } from "../interfaces";
 import PokemonImage from "../components/PokemonImage";
+import ResetIcon from "../components/Icons/ResetIcon";
 
 interface IPokemon {
   name: string;
@@ -72,11 +73,22 @@ const Home: FC<IHomeScreenProps> = ({ navigation }) => {
       >
         <TextInput
           style={styles.input}
-          placeholder="Search..."
+          placeholder="Search Pokemon"
           placeholderTextColor="#666"
           onChangeText={(text) => setSearchQuery(text)}
+          value={searchQuery}
           onSubmitEditing={handleSearch}
         />
+        {viewMode === "search" && (
+          <TouchableOpacity
+            onPress={() => {
+              setViewMode("default");
+              setSearchQuery("");
+            }}
+          >
+            <ResetIcon />
+          </TouchableOpacity>
+        )}
       </View>
       {viewMode === "search" && filteredPokemons.length > 0 && (
         <FlatList

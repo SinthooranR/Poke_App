@@ -70,7 +70,6 @@ export interface IRandomizerScreenProps {
 }
 
 //OTHERS
-
 export interface IPokemonInfo {
   name: string;
   types: [

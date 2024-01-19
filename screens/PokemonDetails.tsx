@@ -34,7 +34,6 @@ const PokemonDetails: FC<IPokemonDetailsProps> = ({ route, navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Set loading state to true while fetching data
         setLoading(true);
 
         const pokemonData: IPokemonInfo = await getPokemonById(param);

@@ -6,10 +6,12 @@ import {
   ListRenderItem,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { getAllUseItems } from "../helpers/getItems";
 import Item from "../components/Item";
+import ResetIcon from "../components/Icons/ResetIcon";
 
 interface IUseItem {
   name: string;
@@ -80,7 +82,18 @@ const AllItems: FC<IUseItemsListProps> = ({ navigation }) => {
               placeholderTextColor="#666"
               onChangeText={(text) => setSearchQuery(text)}
               onSubmitEditing={handleSearch}
+              value={searchQuery}
             />
+            {viewMode === "search" && (
+              <TouchableOpacity
+                onPress={() => {
+                  setViewMode("default");
+                  setSearchQuery("");
+                }}
+              >
+                <ResetIcon />
+              </TouchableOpacity>
+            )}
           </View>
 
           {viewMode === "search" && filteredItems.length > 0 && (

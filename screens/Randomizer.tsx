@@ -29,14 +29,11 @@ const Randomizer: FC<IRandomizerScreenProps> = ({ navigation }) => {
       try {
         const pokemonData = await getAllPokemon();
         setPokemons(pokemonData);
-        // Initial random selection on page load
-        getRandomPokemons();
       } catch (error) {
         console.error("Error getting Pokémon list");
       }
     };
     fetchData();
-
     setShowResults(false);
   }, []);
 
@@ -45,9 +42,7 @@ const Randomizer: FC<IRandomizerScreenProps> = ({ navigation }) => {
   };
 
   const getRandomPokemons = () => {
-    // Shuffle the pokemons array
     const shuffledPokemons = [...pokemons].sort(() => Math.random() - 0.5);
-    // Take the first 10 pokemons
     const randomPokemons = shuffledPokemons.slice(0, 9);
     setRandomPokemon(randomPokemons);
     setShowResults(true);

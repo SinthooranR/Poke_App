@@ -20,7 +20,7 @@ export const getPokemonEvolution = async (pokemonName: string) => {
 
     // Check if evolution_chain exists and is not null
     if (!speciesData.evolution_chain) {
-      return []; // No evolution details available
+      return [];
     }
 
     const evolutionChainUrl = speciesData.evolution_chain.url || "";
@@ -31,7 +31,7 @@ export const getPokemonEvolution = async (pokemonName: string) => {
 
     // Check if chain property exists in the response
     if (!evolutionChainData.chain) {
-      return []; // No evolution details available
+      return [];
     }
 
     // Extract evolution details

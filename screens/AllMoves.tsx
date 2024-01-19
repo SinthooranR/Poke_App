@@ -6,10 +6,12 @@ import {
   ListRenderItem,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { getAllMoves } from "../helpers/getMoves";
 import PokemonMove from "../components/PokemonMove/Index";
+import ResetIcon from "../components/Icons/ResetIcon";
 
 interface IMove {
   name: string;
@@ -74,11 +76,22 @@ const AllMoves: FC<IMoveListProps> = ({ navigation }) => {
           >
             <TextInput
               style={styles.input}
-              placeholder="Search Items"
+              placeholder="Search Moves"
               placeholderTextColor="#666"
               onChangeText={(text) => setSearchQuery(text)}
               onSubmitEditing={handleSearch}
+              value={searchQuery}
             />
+            {viewMode === "search" && (
+              <TouchableOpacity
+                onPress={() => {
+                  setViewMode("default");
+                  setSearchQuery("");
+                }}
+              >
+                <ResetIcon />
+              </TouchableOpacity>
+            )}
           </View>
 
           {viewMode === "search" && filteredMoves.length > 0 && (
