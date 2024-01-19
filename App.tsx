@@ -11,6 +11,7 @@ import { IHomeScreenNavigationProp, IHomeScreenProps } from "./interfaces";
 import MoveDetails from "./screens/MoveDetails";
 import AllMoves from "./screens/AllMoves";
 import AllItems from "./screens/AllItems";
+import Randomizer from "./screens/Randomizer";
 
 export default function App() {
   const Drawer = createDrawerNavigator();
@@ -62,6 +63,12 @@ export default function App() {
         <Drawer.Screen
           name="Items"
           component={AllItems}
+          options={{ headerStyle: { backgroundColor: "#ED1C24" } }}
+        />
+
+        <Drawer.Screen
+          name="Randomizer"
+          component={Randomizer}
           options={{ headerStyle: { backgroundColor: "#ED1C24" } }}
         />
       </Drawer.Navigator>

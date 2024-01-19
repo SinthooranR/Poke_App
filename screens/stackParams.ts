@@ -4,6 +4,7 @@ export type RootStackParamList = {
   Moves: undefined;
   Items: undefined;
   Berries: undefined;
+  Randomizer: undefined;
   PokemonDetails: { param: string };
   MoveDetails: { param: string };
 };

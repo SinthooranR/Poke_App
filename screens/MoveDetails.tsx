@@ -13,6 +13,8 @@ import { getTypeColor } from "../helpers/constants";
 import { IMoveData, IMoveDetailsProps } from "../interfaces";
 import PokemonImage from "../components/PokemonImage";
 import { getMoveDataByName } from "../helpers/getMoves";
+import MoveModal from "../components/MoveModal";
+import InfoIcon from "../components/Icons/InfoIcon";
 
 interface IPokemon {
   name: string;
@@ -24,9 +26,18 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
   const { param } = route.params;
   const [move, setMove] = useState<IMoveData>();
   const [loading, setLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const navigateToDetails = (name: string) => {
     navigation.navigate("PokemonDetails", { param: name });
+  };
+
+  const showModal = (move: any) => {
+    setIsModalVisible(true);
+  };
+
+  const hideModal = () => {
+    setIsModalVisible(false);
   };
 
   useEffect(() => {
@@ -73,23 +84,13 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
         </View>
       ) : (
         <>
-          <Text style={styles.title}>{move?.name}</Text>
-
-          <View style={styles.descContainer}>
-            <Text style={styles.subHeader}>Description</Text>
-            <Text style={styles.descriptionText}>
-              {move?.flavor_text_entries
-                .filter((text) => text.language.name === "en")[0]
-                .flavor_text.replace("\n", " ")}
-            </Text>
-
-            <Text style={styles.subHeader}>Effect</Text>
-            <Text style={styles.descriptionText}>
-              {move?.effect_entries[0].short_effect.replace(
-                "$effect_chance",
-                move.effect_chance.toString()
-              )}
-            </Text>
+          <View style={styles.topSection}>
+            <Text style={styles.title}>{move?.name.replace("-", " ")}</Text>
+            <TouchableOpacity onPress={showModal}>
+              <View style={styles.infoIcon}>
+                <InfoIcon />
+              </View>
+            </TouchableOpacity>
           </View>
 
           {move && move?.learned_by_pokemon.length > 0 && (
@@ -105,7 +106,17 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
             />
           )}
 
-          <StatusBar style="auto" />
+          <MoveModal
+            isVisible={isModalVisible}
+            onClose={hideModal}
+            flavorText={move?.flavor_text_entries
+              .filter((text) => text.language.name === "en")[0]
+              .flavor_text.replace("\n", " ")}
+            effectDescription={move?.effect_entries[0]?.short_effect?.replace(
+              "$effect_chance",
+              move.effect_chance?.toString() || ""
+            )}
+          />
         </>
       )}
     </View>
@@ -114,9 +125,9 @@ const MoveDetails: FC<IMoveDetailsProps> = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: "100%",
     backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
     paddingBottom: 18,
   },
@@ -126,10 +137,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  topSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    paddingHorizontal: 16,
+  },
   title: {
     textTransform: "capitalize",
     fontSize: 24,
     marginVertical: 12,
+    color: "#000000",
+  },
+  infoIcon: {
+    marginLeft: 16,
   },
   descContainer: {
     width: "100%",

@@ -59,6 +59,16 @@ export interface IUseItemsListProps {
   navigation: IUseItemsNavigationProp;
 }
 
+//Randomizer Page
+export type IRandomizerNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Randomizer"
+>;
+
+export interface IRandomizerScreenProps {
+  navigation: IRandomizerNavigationProp;
+}
+
 //OTHERS
 
 export interface IPokemonInfo {
